@@ -1,4 +1,5 @@
 import {createStore} from "vuex";
+import axiosClient from "../axios.js";
 
 const store = createStore({
     // change vite port
@@ -17,22 +18,24 @@ const store = createStore({
     getters: {},
     actions: {
         register({commit}, user){
-            return fetch(`http://survey:87/api/register`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify(user),
-            })
-                .then( (res) => res.json() )
-                .then( (res) => {
-                    if (res.success){
-                        commit('setUser', res);
+            return axiosClient.post('/register', user)
+                .then( ({data}) => {
+                    if (data.success){
+                        commit('setUser', data);
                     }
-                    return res;
+                    return data;
                 })
         },
+
+        login({commit}, user){
+            return axiosClient.post('/login', user)
+                .then( ({data}) => {
+                    if (data.success){
+                        commit('setUser', data);
+                    }
+                    return data;
+                })
+        }
     },
     mutations: {
         logout(state){
