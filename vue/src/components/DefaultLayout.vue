@@ -149,10 +149,15 @@ const router = useRouter();
 const user = computed( () => store.state.user.data );
 
 function logout(ev){
-    store.commit('logout');
-    router.push({
-        name: 'Login'
-    })
+    store.dispatch('logout')
+        .then( response => {
+            if (response.success){
+                router.push({name: 'Login'})
+            }
+        })
+        .catch(err =>{
+            console.log(err.response.data)
+        })
 }
 
 </script>
