@@ -1,8 +1,9 @@
 <template>
     <PageComponent>
         <template v-slot:header>
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900">Dashboard
-            </h1>
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">Survey view/create</h1>
+            </div>
         </template>
     </PageComponent>
 </template>
@@ -12,4 +13,6 @@ import PageComponent from "../components/PageComponent.vue"
 
 </script>
 
-<style></style>
+<style scoped>
+
+</style>
