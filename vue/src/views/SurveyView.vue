@@ -8,6 +8,7 @@
             </div>
         </template>
 
+        <pre>{{ $store.state.surveys }}</pre>
         <form @submit.prevent="saveSurvey">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
 
@@ -166,6 +167,7 @@ import QuestionEditor from "../components/editor/QuestionEditor.vue"
 import { ref } from "vue"
 import {useRoute} from "vue-router"
 import store from "../store/index.js";
+import { v4 as uuidv4 } from "uuid"
 
 const route = useRoute(); // use current route
 
@@ -185,12 +187,35 @@ if (route.params.id){
 }
 
 function saveSurvey(){
+
 }
-function addQuestion(){
+
+function questionChange(question){
+    model.value.questions = model.value.questions.map(
+        q => {
+            if (q.id === question.id){
+                // todo для успокоения (не точно) сделать json parse/stringify
+                return question;
+            }
+            return q;
+        }
+    )
 }
-function questionChange(){
+
+function addQuestion(index){
+    const newQuestion = {
+        id: uuidv4(),
+        type: "text",
+        question: "",
+        description: null,
+        data: {},
+    }
+
+    model.value.questions.splice(index, 0, newQuestion);
 }
-function deleteQuestion(){
+
+function deleteQuestion(question){
+    model.value.questions = model.value.questions.filter(i => i.id !== question.id);
 }
 
 </script>

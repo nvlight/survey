@@ -157,11 +157,6 @@ const questionTypes = computed( () => store.state.questionTypes );
 // Re-create the whole question data to avioid unintentional reference change
 const model = ref(JSON.parse(JSON.stringify(props.question)));
 
-function addQuestion(){
-}
-function deleteQuestion(){
-}
-
 function upperCaseFirst(val){
     return val.charAt(0).toUpperCase() + val.slice(1);
 }
@@ -202,6 +197,14 @@ function dataChange(){
     }
 
     emit("change", data);
+}
+
+function addQuestion(){
+    emit("addQuestion", props.index + 1);
+}
+
+function deleteQuestion(){
+    emit("deleteQuestion", props.question);
 }
 
 </script>
