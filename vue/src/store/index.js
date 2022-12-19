@@ -6,7 +6,7 @@ const tmpSurveys = [
         id: 100,
         title: 'the Martin German youtube channel',
         slug: 'the-Martin-German-youtube-channel',
-        status: 'draft',
+        status: 'true',
         image: "https://items.s1.citilink.ru/1809056_v01_b.jpg",
         description: "My nama is Martin.<br> I am Web Developer with 9+ year of experience, free education com",
         created_at: "2021-12-20 18:00:00",
