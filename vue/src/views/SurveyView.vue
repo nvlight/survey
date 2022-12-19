@@ -8,7 +8,7 @@
             </div>
         </template>
 
-        <pre>{{ $store.state.surveys }}</pre>
+<!--        <pre>{{ $store.state.surveys }}</pre>-->
         <form @submit.prevent="saveSurvey">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
 
