@@ -47,6 +47,10 @@ class SurveyController extends Controller
     {
         $user = $request->user();
         if ($user->id !== $survey->user_id){
+            return response([
+                '$user_id' => $user->id,
+                '$survey->user_id' => $survey->user_id
+            ]);
             return abort(403, 'Unathorized action.');
         }
 
@@ -62,7 +66,7 @@ class SurveyController extends Controller
      */
     public function update(UpdateSurveyRequest $request, Survey $survey)
     {
-        $result = Survey::update($request->validated());
+        $result = $survey->update($request->validated());
 
         return new SurveyResource($request);
     }

@@ -62,7 +62,7 @@
 
                     <!-- Description -->
                     <div>
-                        <label class="text-sm block font-medium text-gray-700">
+                        <label class="text-sm block font-medium text-gray-700">Description
                             <div class="mt-1">
                                 <textarea name="description"
                                     rows="3"
@@ -79,7 +79,7 @@
 
                     <!-- Expire Date -->
                     <div>
-                        <label class="text-sm block font-medium text-gray-700">
+                        <label class="text-sm block font-medium text-gray-700">Expire Date
                             <input type="date" name="expire_data"
                                    v-model="model.expire_data"
                                    autocomplete="survey_title"
@@ -165,10 +165,11 @@
 import PageComponent from "../components/PageComponent.vue"
 import QuestionEditor from "../components/editor/QuestionEditor.vue"
 import { ref } from "vue"
-import {useRoute} from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 import store from "../store/index.js";
 import { v4 as uuidv4 } from "uuid"
 
+const router = useRouter();
 const route = useRoute(); // use current route
 
 let model = ref({
@@ -184,10 +185,6 @@ if (route.params.id){
     model.value = store.state.surveys.find(
         s => s.id === parseInt(route.params.id)
     )
-}
-
-function saveSurvey(){
-
 }
 
 function questionChange(question){
@@ -216,6 +213,16 @@ function addQuestion(index){
 
 function deleteQuestion(question){
     model.value.questions = model.value.questions.filter(i => i.id !== question.id);
+}
+
+function saveSurvey(){
+    store.dispatch("saveSurvey", model.value)
+        .then( ({data}) => {
+            router.push({
+                name: "SurveyView",
+                params: { id: data.data.id},
+            })
+        })
 }
 
 </script>
