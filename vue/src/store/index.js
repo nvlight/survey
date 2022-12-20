@@ -450,6 +450,16 @@ const store = createStore({
             }
             return response;
         },
+        deleteSurvey({}, id){
+            return  axiosClient
+                .delete(`/survey/${id}`)
+                .then( ( res ) => {
+                    return res;
+                })
+                .catch( (err) =>{
+                    throw err;
+                })
+        },
     },
     mutations: {
         logout(state){

@@ -114,9 +114,25 @@ class SurveyController extends Controller
             return abort(403, 'Unathorized action.');
         }
 
-        $survey->delete();
+        $result['success'] = true;
+        try{
+            $survey->delete();
 
-        return response('', 204);
+            // delete old image
+            if ($survey->image){
+                $absolutePath = public_path($survey->image);
+                try{
+                    File::delete($absolutePath);
+                }catch (Exception $e){
+                    throw new \Exception('file delete failing!');
+                }
+            }
+        }catch (Exception $e){
+            //throw new \Exception('file delete failing!');
+            $result['success'] = false;
+        }
+
+        return response($result);
     }
 
     private function saveImage($image)
