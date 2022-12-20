@@ -371,10 +371,18 @@ const store = createStore({
             data: {},
             token: sessionStorage.getItem("TOKEN"),
         },
+        currentSurvey:{
+            loading: false,
+            data: {},
+        },
         surveys: [...tmpSurveys],
         questionTypes: ["text", "select", "radio", "checkbox", "textarea"]
     },
-    getters: {},
+    getters: {
+        surveys(state){
+            return state.surveys;
+        }
+    },
     actions: {
         register({commit}, user){
             return axiosClient.post('/register', user)
@@ -405,6 +413,20 @@ const store = createStore({
                     return data;
                 })
         },
+        getSurvey({commit}, id){
+            commit('setCurrentSurveyLoading', true);
+            return axiosClient
+                .get(`/survey/${id}`)
+                .then( ( res ) => {
+                    commit('setCurrentSurvey', res.data);
+                    commit('setCurrentSurveyLoading', false);
+                    return res;
+                })
+                .catch( (err) =>{
+                    commit('setCurrentSurveyLoading', false);
+                    throw err;
+                })
+        },
         saveSurvey({commit}, survey){
             delete survey.image_url;
             let response;
@@ -412,14 +434,14 @@ const store = createStore({
                 response = axiosClient
                     .put(`/survey/${survey.id}`, survey)
                     .then( ( res ) => {
-                        commit("updateSurvey", res.data);
+                        commit("setCurrentSurvey", res.data);
                         return res;
                     })
             }else{
                 response = axiosClient
                     .post('/survey', survey)
                     .then( ( res ) => {
-                        commit("saveSurvey", res.data);
+                        commit("setCurrentSurvey", res.data);
                         return res;
                     })
             }
@@ -438,6 +460,9 @@ const store = createStore({
             state.user.token = data.token;
             sessionStorage.setItem('TOKEN',  data.token);
         },
+
+        // эти 2 штуки надо удалить, как оказалось они не нужны,
+        // todo: for delete
         updateSurvey(state, survey){
             state.surveys = state.surveys.map( s => {
                 if (s.id === parseInt(survey.data.id) ){
@@ -446,8 +471,16 @@ const store = createStore({
                 return s;
             })
         },
+        // todo: for delete
         saveSurvey(state, survey){
             state.surveys = [...state.surveys, survey.data];
+        },
+
+        setCurrentSurveyLoading(state, value){
+            state.currentSurvey.loading = value;
+        },
+        setCurrentSurvey(state, data){
+            state.currentSurvey.data = data.data;
         },
     },
     modules: {},

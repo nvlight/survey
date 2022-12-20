@@ -165,7 +165,7 @@
 <script setup>
 import PageComponent from "../components/PageComponent.vue"
 import QuestionEditor from "../components/editor/QuestionEditor.vue"
-import { ref } from "vue"
+import { ref, watch, computed } from "vue"
 import {useRoute, useRouter} from "vue-router"
 import store from "../store/index.js";
 import { v4 as uuidv4 } from "uuid"
@@ -182,10 +182,37 @@ let model = ref({
     questions: [],
 });
 
+watch(
+    () => store.state.currentSurvey.data,
+    (nv, ov) => {
+        model.value = {
+            ...JSON.parse(JSON.stringify(nv)),
+            status: nv.status !== "draft",
+        }
+    }
+);
+
 if (route.params.id){
-    model.value = store.state.surveys.find(
-        s => s.id === parseInt(route.params.id)
-    )
+    store.dispatch('getSurvey', route.params.id);
+
+    // этот вариант не работал какое-то время, но потом заработал
+    //model.value = store.state.surveys.find(
+    //   s => s.id === parseInt(route.params.id)
+    //)
+    //console.log('find: ',model.value);
+
+    // этот вариант вроде бы работал все время.
+    // const currSurvey = store.state.surveys.filter(
+    //     s => s.id === parseInt(route.params.id)
+    // )
+    // console.log(currSurvey);
+    // let cs2 = null;
+    // if (currSurvey.length){
+    //     model.value = currSurvey[0];
+    //     cs2 = currSurvey[0];
+    // }
+    // console.log(currSurvey.length);
+    // console.log(cs2);
 }
 
 function questionChange(question){
