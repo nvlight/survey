@@ -372,10 +372,14 @@ const store = createStore({
             token: sessionStorage.getItem("TOKEN"),
         },
         currentSurvey:{
-            loading: true,
+            loading: false,
             data: {},
         },
-        surveys: [...tmpSurveys],
+        //surveys: [...tmpSurveys],
+        surveys: {
+            loading: false,
+            data: {},
+        },
         questionTypes: ["text", "select", "radio", "checkbox", "textarea"]
     },
     getters: {
@@ -430,6 +434,21 @@ const store = createStore({
                     throw err;
                 })
         },
+        getSurveys({commit}){
+            commit('setSurveysLoading', true);
+            return axiosClient
+                .get(`/survey/`)
+                .then( ( res ) => {
+                    commit('setSurveys', res.data);
+                    commit('setSurveysLoading', false);
+                    return res;
+                })
+                .catch( (err) =>{
+                    commit('setSurveysLoading', false);
+                    throw err;
+                })
+        },
+
         saveSurvey({commit}, survey){
             delete survey.image_url;
             let response;
@@ -450,10 +469,14 @@ const store = createStore({
             }
             return response;
         },
-        deleteSurvey({}, id){
+        deleteSurvey({commit}, id){
             return  axiosClient
                 .delete(`/survey/${id}`)
                 .then( ( res ) => {
+                    //debugger;
+                    if (res.data.success){
+                        commit('deleteSurvey', id);
+                    }
                     return res;
                 })
                 .catch( (err) =>{
@@ -489,12 +512,25 @@ const store = createStore({
             state.surveys = [...state.surveys, survey.data];
         },
 
+        setSurveysLoading(state, value){
+            state.surveys.loading = value;
+        },
         setCurrentSurveyLoading(state, value){
             state.currentSurvey.loading = value;
         },
-        setCurrentSurvey(state, data){
-            state.currentSurvey.data = data.data;
+        setCurrentSurvey(state, survey){
+            state.currentSurvey.data = survey.data;
         },
+        setSurveys(state, surveys){
+            // debugger;
+            state.surveys.data = surveys.data;
+        },
+
+        deleteSurvey(state, id){
+            state.surveys.data = state.surveys.data.filter(
+                s => s.id !== parseInt(id)
+            )
+        }
     },
     modules: {},
 })

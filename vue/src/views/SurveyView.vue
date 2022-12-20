@@ -5,6 +5,7 @@
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900">
                     {{ route.params.id ? model.title : "Create a Survey" }}
                 </h1>
+
                 <button v-if="route.params.id"
                     @click="deleteSurvey"
                     class="py-2 px-3 text-white bg-red-500 rounded-md hover:bg-red-600 focus:bg-red-700"
