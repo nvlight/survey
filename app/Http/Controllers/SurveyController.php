@@ -6,9 +6,12 @@ use App\Http\Resources\SurveyResource;
 use App\Models\Survey;
 use App\Http\Requests\StoreSurveyRequest;
 use App\Http\Requests\UpdateSurveyRequest;
+use App\Models\SurveyQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 use Mockery\Exception;
 
 class SurveyController extends Controller
@@ -44,6 +47,12 @@ class SurveyController extends Controller
         }
 
         $survey = Survey::create($data);
+
+        // Create new questions
+        foreach ($data['questions'] as $question){
+            $question['survey_id'] = $survey->id;
+            $this->createQuestion($question);
+        }
 
         return new SurveyResource($survey);
     }
@@ -96,6 +105,22 @@ class SurveyController extends Controller
         }
 
         $survey->update($data);
+
+        // Create new questions for update survey
+        // сделаю очень просто, сначала удалю все вопросы у survey
+        // потом просто добавлю все прилетевшие новые вопросы
+
+        try{
+            SurveyQuestion::where('survey_id', '=', $survey->id)
+                ->delete();
+
+            foreach ($data['questions'] as $question){
+                $question['survey_id'] = $survey->id;
+                $this->createQuestion($question);
+            }
+        }catch (Exception $e){
+            throw new \Exception('survey update failing!');
+        }
 
         return new SurveyResource($survey);
     }
@@ -168,5 +193,32 @@ class SurveyController extends Controller
         }
 
         return $relativePath;
+    }
+
+    /**
+     * Создает вопросы для опроса, т.е. назвать нужно было createQuestions
+     * @param mixed $data
+     * @return SurveyQuestion
+     */
+    private function createQuestion(mixed $data)
+    {
+        if (is_array($data['data'])){
+            $data['data'] = json_encode($data['data']);
+        }
+        $validator = Validator::make($data, [
+            'question' => 'required|string',
+            'type' => ['required', Rule::in([
+                Survey::TYPE_TEXT    ,
+                Survey::TYPE_CHECKBOX,
+                Survey::TYPE_SELECT  ,
+                Survey::TYPE_RADIO   ,
+                Survey::TYPE_TEXTAREA,
+            ])],
+            'description' => 'nullable|string',
+            'data' => 'present',
+            'survey_id' => 'exists:App\Models\Survey,id',
+        ]);
+
+        return SurveyQuestion::create($validator->validated());
     }
 }

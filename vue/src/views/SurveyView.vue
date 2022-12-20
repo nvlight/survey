@@ -238,6 +238,7 @@ function questionChange(question){
             if (q.id === question.id){
                 // todo для успокоения (не точно) сделать json parse/stringify
                 return question;
+                //return JSON.parse(JSON.stringify(question));
             }
             return q;
         }

@@ -87,7 +87,8 @@
                 Options
 
                 <!-- Add new option -->
-                <button @click="addOption"
+                <button @click.prevent="addOption"
+                    type="button"
                     class="flex items-center text-xs py-1 px-2 bg-gray-600 text-white rounded-sm hover:bg-gray-700 focus:bg-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                          class="w-4 h-4">
@@ -119,6 +120,7 @@
                     />
                     <button
                         @click="removeOption(option)"
+                        type="button"
                         class="flex items-center text-red-500 hover:border-red-200 border border-transparent
                         w-6 h-6 transition-colors ml-1 px-0.5 rounded-full"
                     >
@@ -154,7 +156,7 @@ const emit = defineEmits([
 
 const questionTypes = computed( () => store.state.questionTypes );
 
-// Re-create the whole question data to avioid unintentional reference change
+// Re-create the whole question data to avoid unintentional reference change
 const model = ref(JSON.parse(JSON.stringify(props.question)));
 
 function upperCaseFirst(val){
