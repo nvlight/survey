@@ -3,13 +3,15 @@
         <template v-slot:header>
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-                    {{ model.id ? model.title : "Create a Survey" }}
+                    {{ route.params.id ? model.title : "Create a Survey" }}
                 </h1>
             </div>
         </template>
 
-<!--        <pre>{{ $store.state.surveys }}</pre>-->
-        <form @submit.prevent="saveSurvey">
+<!--        <pre>{{ $store.getters.currentSurvey }}</pre>-->
+
+        <div v-if="surveyLoading" class="text-center">Загрузка...</div>
+        <form v-else @submit.prevent="saveSurvey">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
 
                 <!-- Survey fileds -->
@@ -181,6 +183,8 @@ let model = ref({
     expire_data: null,
     questions: [],
 });
+
+const surveyLoading = computed( () => store.state.currentSurvey.loading)
 
 watch(
     () => store.state.currentSurvey.data,
