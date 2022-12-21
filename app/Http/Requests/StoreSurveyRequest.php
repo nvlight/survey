@@ -31,6 +31,7 @@ class StoreSurveyRequest extends FormRequest
     public function rules()
     {
         return [
+            //'img' => 'required|dimensions:min_width=100,min_height=100,max_width=1000,max_height=600|between:1,500',
             'title' => 'required|string|max:1000',
             'user_id' => 'exists:users,id',
             'image' => 'nullable|string',

@@ -22,6 +22,7 @@
         </template>
 
 <!--        <pre>{{ $store.getters.currentSurvey }}</pre>-->
+<!--        <pre>{{ model.img}}</pre>-->
 
         <div v-if="surveyLoading" class="text-center">Загрузка...</div>
         <form v-else @submit.prevent="saveSurvey">
@@ -29,6 +30,14 @@
 
                 <!-- Survey fileds -->
                 <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+
+                    <!-- tmp img -->
+<!--                    <div>-->
+<!--                        <div>img again</div>-->
+<!--                        <input @change="imgChange" type="file" name="img">-->
+<!--                    </div>-->
+                    <!--/ tmp img -->
+
                     <!-- Image -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
@@ -54,7 +63,7 @@
                                     hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2
                                     focus:ring-indigo-500"
                                 >
-                                <input type="file"
+                                <input type="file" name="image"
                                     @change="onImageChoose"
                                     class="opacity-0 absolute left-0 top-0 right-0 bottom-0">
                                 Change
@@ -195,6 +204,7 @@ let model = ref({
     image: null,
     expire_data: null,
     questions: [],
+    img: null,
 });
 
 const surveyLoading = computed( () => store.state.currentSurvey.loading)
@@ -264,10 +274,16 @@ function deleteQuestion(question){
 function saveSurvey(){
     store.dispatch("saveSurvey", model.value)
         .then( ({data}) => {
+            if (data.data.success){
+                store.commit('notify', {
+                    message: 'Successfully saved!',
+                    type: 'success',
+                })
+            }
             router.push({
                 name: "SurveyView",
                 params: { id: data.data.id},
-            })
+            });
         })
 }
 
@@ -294,6 +310,11 @@ function onImageChoose(ev) {
         model.value.image_url = reader.result;
     }
     reader.readAsDataURL(file);
+}
+
+function imgChange(ev){
+    model.value.img = ev.target.files[0];
+    console.log(model.value.img);
 }
 
 </script>

@@ -40,20 +40,26 @@ class SurveyController extends Controller
     {
         $data = $request->validated();
 
-        //
-        if (isset($data['image'])){
-            $relativePath = $this->saveImage($data['image']);
-            $data['image'] = $relativePath;
+        $success = true;
+        try{
+            $survey = Survey::create($data);
+
+            if (isset($data['image'])){
+                $relativePath = $this->saveImage($data['image']);
+                $data['image'] = $relativePath;
+            }
+
+            // Create new questions
+            foreach ($data['questions'] as $question){
+                $question['survey_id'] = $survey->id;
+                $this->createQuestion($question);
+            }
+        }catch (Exception $e){
+            $success = false;
+            // todo: log
         }
 
-        $survey = Survey::create($data);
-
-        // Create new questions
-        foreach ($data['questions'] as $question){
-            $question['survey_id'] = $survey->id;
-            $this->createQuestion($question);
-        }
-
+        $survey->success = $success;
         return new SurveyResource($survey);
     }
 
@@ -88,7 +94,8 @@ class SurveyController extends Controller
     {
         $data = $request->validated();
 
-        //
+        $success = true;
+
         if (isset($data['image'])){
             $relativePath = $this->saveImage($data['image']);
             $data['image'] = $relativePath;
@@ -99,17 +106,22 @@ class SurveyController extends Controller
                 try{
                     File::delete($absolutePath);
                 }catch (Exception $e){
-                    throw new \Exception('file delete failing!');
+                    $success = false;
+                    // todo: log
                 }
             }
         }
 
-        $survey->update($data);
+        try{
+            $survey->update($data);
+        }catch (Exception $e){
+            $success = false;
+            // todo: log
+        }
 
         // Create new questions for update survey
         // сделаю очень просто, сначала удалю все вопросы у survey
         // потом просто добавлю все прилетевшие новые вопросы
-
         try{
             SurveyQuestion::where('survey_id', '=', $survey->id)
                 ->delete();
@@ -119,9 +131,11 @@ class SurveyController extends Controller
                 $this->createQuestion($question);
             }
         }catch (Exception $e){
-            throw new \Exception('survey update failing!');
+            $success = false;
+            // todo: log
         }
 
+        $survey->success = $success;
         return new SurveyResource($survey);
     }
 

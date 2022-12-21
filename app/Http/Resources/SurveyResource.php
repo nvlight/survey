@@ -17,6 +17,7 @@ class SurveyResource extends JsonResource
     {
         //return parent::toArray($request);
         return [
+            'success' => $this->success,
             'id' => $this->id,
             'title' => $this->title,
             'image_url' => $this->image ? URL::to($this->image) : null,

@@ -380,7 +380,12 @@ const store = createStore({
             loading: false,
             data: {},
         },
-        questionTypes: ["text", "select", "radio", "checkbox", "textarea"]
+        questionTypes: ["text", "select", "radio", "checkbox", "textarea"],
+        notification: {
+            show: false,
+            type: null,
+            message: '',
+        },
     },
     getters: {
         surveys(state){
@@ -460,6 +465,9 @@ const store = createStore({
                         return res;
                     })
             }else{
+                //let fd = new FormData();
+                //fd.append('img', survey.img);
+                //console.log(survey);
                 response = axiosClient
                     .post('/survey', survey)
                     .then( ( res ) => {
@@ -530,6 +538,15 @@ const store = createStore({
             state.surveys.data = state.surveys.data.filter(
                 s => s.id !== parseInt(id)
             )
+        },
+
+        notify(state, {message, type}){
+            state.notification.show = true;
+            state.notification.type = type;
+            state.notification.message = message;
+            setTimeout( () => {
+                state.notification.show = false;
+            }, 1500)
         }
     },
     modules: {},
