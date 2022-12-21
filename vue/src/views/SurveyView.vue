@@ -25,7 +25,7 @@
 <!--        <pre>{{ model.img}}</pre>-->
 
         <div v-if="surveyLoading" class="text-center">Загрузка...</div>
-        <form v-else @submit.prevent="saveSurvey">
+        <form v-else @submit.prevent="saveSurvey" class="animate-fade-in-down">
             <div class="shadow sm:rounded-md sm:overflow-hidden">
 
                 <!-- Survey fileds -->
