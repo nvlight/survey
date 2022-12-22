@@ -440,6 +440,25 @@ const store = createStore({
                     throw err;
                 })
         },
+        getSurveyBySlug({commit}, slug){
+            commit('setCurrentSurveyLoading', true);
+            return axiosClient
+                .get(`/survey-by-slug/${slug}`)
+                .then(response => {
+
+                    if (response.data){
+                        console.log('i am here')
+                        commit("setCurrentSurvey", response.data)
+                    }
+                    commit('setCurrentSurveyLoading', false);
+
+                    return response;
+                })
+                .catch(err => {
+                    commit('setCurrentSurveyLoading', false);
+                    throw err;
+                })
+        },
         getSurveys({commit}, {url = null} = {}){
             //console.log(url);
             url = url || '/survey'
@@ -493,6 +512,9 @@ const store = createStore({
                 .catch( (err) =>{
                     throw err;
                 })
+        },
+        saveSurveyAnswer({commit}){
+
         },
     },
     mutations: {
