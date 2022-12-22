@@ -26,7 +26,9 @@ class SurveyController extends Controller
         $user = $request->user();
         //return Survey::where('user_id', $user->id)->paginate();
         return SurveyResource::collection(
-            Survey::where('user_id', $user->id)->paginate()
+            Survey::where('user_id', $user->id)
+                ->paginate(3)
+                //->get()
         );
     }
 
@@ -42,12 +44,13 @@ class SurveyController extends Controller
 
         $success = true;
         try{
-            $survey = Survey::create($data);
-
+            // save image
             if (isset($data['image'])){
                 $relativePath = $this->saveImage($data['image']);
                 $data['image'] = $relativePath;
             }
+
+            $survey = Survey::create($data);
 
             // Create new questions
             foreach ($data['questions'] as $question){
@@ -97,6 +100,7 @@ class SurveyController extends Controller
         $success = true;
 
         if (isset($data['image'])){
+            // save image
             $relativePath = $this->saveImage($data['image']);
             $data['image'] = $relativePath;
 
@@ -174,13 +178,14 @@ class SurveyController extends Controller
         return response($result);
     }
 
+    /** todo: исправить этот глупый метод */
     private function saveImage($image)
     {
         //
         if (preg_match('/^data:image\/(\w+);base64,/', $image, $type)){
             $image = substr($image, strpos($image, ',') + 1);
             $type = strtolower($type[1]);
-            if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])){
+            if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png', 'webp'])){
                 throw new \Exception('invalid image type');
             }
             $image = str_replace(' ', '+', $image);

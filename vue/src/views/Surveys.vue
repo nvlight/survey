@@ -13,15 +13,45 @@
             </div>
         </template>
 
-        <div v-if="surveysLoading" class="text-center">Загрузка...</div>
-        <div v-else class="grid grid-cols-1 gap-3 sm:grid-col-2 md:grid-cols-3">
-            <SurveyListItem v-for="(survey,index) in surveys"
-                :key="survey.id"
-                :survey="survey"
-                class="opacity-0 animate-fade-in-down"
-                :style="{animationDelay: `${index * 0.1}s`}"
-                @delete="deleteSurvey"
-            />
+        <div v-if="surveys.loading" class="text-center">Загрузка...</div>
+        <div v-else>
+            <div class="grid grid-cols-1 gap-3 sm:grid-col-2 md:grid-cols-3">
+                <SurveyListItem v-for="(survey,index) in surveys.data"
+                    :key="survey.id"
+                    :survey="survey"
+                    class="opacity-0 animate-fade-in-down"
+                    :style="{animationDelay: `${index * 0.1}s`}"
+                    @delete="deleteSurvey"
+                />
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center mt-5">
+                <nav
+                    class="relative z-0 inline-flex justify-center rounded-md shadow-sm"
+                    aria-label="Pagination"
+                >
+                    <a
+                       v-for="(link, i) of surveys.links"
+                       :key="i"
+                       :disabled="!link.url"
+                       v-html="link.label"
+                       href="#" aria-current="page"
+                       @click="getForPage($event, link)"
+                       class="relative inline-flex items-center px-4 py-2 border test-sm font-medium whitespace-nowrap"
+                       :class="[
+                            link.active
+                                ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-100',
+                            i === 0 ? 'rounded-l-md' : '',
+                            i === surveys.links.length-1 ? 'rounded-r-md' : '',
+                        ]"
+                    >
+
+                    </a>
+                </nav>
+            </div>
+            <!--/ Pagination -->
         </div>
     </PageComponent>
 </template>
@@ -32,8 +62,7 @@ import store from "../store/index.js";
 import {computed} from "vue";
 import SurveyListItem from "../components/SurveyListItem.vue";
 
-const surveys = computed( () => store.state.surveys.data );
-const surveysLoading = computed( () => store.state.surveys.loading )
+const surveys = computed( () => store.state.surveys );
 
 store.dispatch('getSurveys')
     .then((res) => {
@@ -49,6 +78,15 @@ function deleteSurvey(survey){
             // сэкономил еще запрос в бд, путем удаления записи в сторе.
             //store.dispatch('getSurveys');
         })
+}
+
+function getForPage(event, link) {
+    event.preventDefault();
+    if (!link.url || link.active){
+        return;
+    }
+
+    store.dispatch("getSurveys", {url: link.url})
 }
 
 </script>
