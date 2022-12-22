@@ -447,7 +447,6 @@ const store = createStore({
                 .then(response => {
 
                     if (response.data){
-                        console.log('i am here')
                         commit("setCurrentSurvey", response.data)
                     }
                     commit('setCurrentSurveyLoading', false);
@@ -513,8 +512,18 @@ const store = createStore({
                     throw err;
                 })
         },
-        saveSurveyAnswer({commit}){
+        saveSurveyAnswer({commit}, {surveyId, answers}){
+            return axiosClient.
+                post(`/survey/${surveyId}/answer`, {answers})
+                .then(response => {
+                    if (response.data.success){
 
+                    }
+                    return response;
+                })
+                .catch(err => {
+                    throw err
+                })
         },
     },
     mutations: {

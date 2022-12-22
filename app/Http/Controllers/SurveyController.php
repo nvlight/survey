@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSurveyAnswerRequest;
 use App\Http\Resources\SurveyResource;
 use App\Models\Survey;
 use App\Http\Requests\StoreSurveyRequest;
 use App\Http\Requests\UpdateSurveyRequest;
+use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
+use App\Models\SurveyQuestionAnswer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Mockery\Exception;
+use Illuminate\Database\QueryException;
 
 class SurveyController extends Controller
 {
@@ -97,6 +102,55 @@ class SurveyController extends Controller
         $survey->success = true;
 
         return new SurveyResource($survey);
+    }
+
+    public function storeAnswer(StoreSurveyAnswerRequest $request, Survey $survey) // , $answers
+    {
+        $validated = $request->validated();
+
+        $success = true;
+        DB::beginTransaction();
+        try {
+            $surveryAnswer = SurveyAnswer::create([
+                'survey_id' => $survey->id,
+                'start_date' => date('Y-m-d H:i:s'),
+                'end_date' => date('Y-m-d H:i:s'),
+            ]);
+
+            foreach ($validated['answers'] as $questionId => $answer) {
+                if (!SurveyQuestion::where(['id' => $questionId, 'survey_id' => $survey->id])->get()) {
+                    continue;
+                }
+
+                $data = [
+                    'survey_question_id' => $questionId,
+                    'survey_answer_id' => $surveryAnswer->id,
+                    'answer' => is_array($answer) ? json_encode($answer) : $answer,
+                ];
+
+                SurveyQuestionAnswer::create($data);
+            }
+
+            DB::commit();
+        }catch (QueryException $e){
+            $success = false;
+            DB::rollBack();
+            // todo: log
+            logger(
+                implode('. ', [
+                    'file_: ' . __FILE__,
+                    'line_: ' . __LINE__,
+                    'Message: ' . $e->getMessage(),
+                    'line: ' . $e->getLine(),
+                    'code: ' . $e->getCode(),
+                    'sql: ' . $e->getSql(),
+                ])
+            );
+        }
+
+        return response([
+            'success' => $success,
+        ]);
     }
 
     /**

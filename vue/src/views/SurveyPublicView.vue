@@ -20,7 +20,7 @@
                     class="py-8 px-6 bg-emerald-400 text-white w-[600px] mx-auto"
                 >
                     <div class="text-xl mb-3 font-semibold">
-                        Thank you for participating in this survey
+                        Thank you for participating in this survey!
                     </div>
                     <button @click="submitAnatherResponse" type="button"
                         class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm
@@ -43,15 +43,15 @@
                         />
                     </div>
                     <!--/ survey questions -->
-                </div>
 
-                <button
-                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm
+                    <button
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm
                         font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none
                         focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Submit
-                </button>
+                    >
+                        Submit
+                    </button>
+                </div>
             </form>
         </div>
     </div>
