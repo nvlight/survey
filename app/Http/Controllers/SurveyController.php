@@ -32,7 +32,7 @@ class SurveyController extends Controller
         //return Survey::where('user_id', $user->id)->paginate();
         return SurveyResource::collection(
             Survey::where('user_id', $user->id)
-                ->paginate(3)
+                ->paginate(6)
                 //->get()
         );
     }

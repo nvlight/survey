@@ -26,7 +26,7 @@
 
         <div v-if="surveyLoading" class="text-center">Загрузка...</div>
         <form v-else @submit.prevent="saveSurvey" class="animate-fade-in-down">
-            <div class="shadow sm:rounded-md sm:overflow-hidden">
+            <div class="border shadow sm:rounded-md sm:overflow-hidden">
 
                 <!-- Survey fileds -->
                 <div class="px-4 py-5 bg-white space-y-6 sm:p-6">

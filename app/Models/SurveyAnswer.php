@@ -16,4 +16,9 @@ class SurveyAnswer extends Model
     ];
 
     public $timestamps = false;
+
+    public function survey()
+    {
+        return $this->belongsTo(Survey::class);
+    }
 }

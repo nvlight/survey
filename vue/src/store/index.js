@@ -387,6 +387,10 @@ const store = createStore({
             type: null,
             message: '',
         },
+        dashboard: {
+            loading: false,
+            data: {},
+        }
     },
     getters: {
         surveys(state){
@@ -525,6 +529,22 @@ const store = createStore({
                     throw err
                 })
         },
+        getDashboardData({commit}){
+            commit('setDashboardLoading', true);
+            return axiosClient
+                .get(`/dashboard`)
+                .then(response => {
+                    if (response.data.success){
+                        commit('setDashboard', response.data);
+                    }
+                    commit('setDashboardLoading', false);
+                    return response;
+                })
+                .catch(err => {
+                    commit('setDashboardLoading', false);
+                    throw err
+                })
+        },
     },
     mutations: {
         logout(state){
@@ -582,7 +602,15 @@ const store = createStore({
             setTimeout( () => {
                 state.notification.show = false;
             }, 1500)
-        }
+        },
+
+        setDashboardLoading(state, value){
+            state.dashboard.loading = value;
+        },
+        setDashboard(state, dashboard){
+            // debugger;
+            state.dashboard.data = dashboard;
+        },
     },
     modules: {},
 })

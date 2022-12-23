@@ -4,7 +4,7 @@
             <slot name="header"></slot>
         </div>
     </header>
-    <main>
+    <main class="bg-gray-100 min-h-screen">
         <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             <!-- Replace with your content -->
             <div class="px-4 py-6 sm:px-0">
@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+
 const props = defineProps({
     title: {
         type: String,
