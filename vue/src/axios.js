@@ -2,7 +2,7 @@ import axios from "axios"
 import store from "./store/index.js";
 
 const axiosClient = axios.create({
-    baseURL: 'http://survey:87/api/',
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/api/`,
 })
 
 axiosClient.interceptors.request.use(config => {
