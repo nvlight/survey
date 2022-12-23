@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SurveyAnswerResource;
-use App\Http\Resources\SurveyResource;
+use App\Http\Resources\SurveyResourceDashboard;
 use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use Illuminate\Http\Request;
@@ -37,9 +37,10 @@ class DashboardController extends Controller
             ->getModels('survey_answers.*');
 
         return response([
+            'user' => ['name' => $user->name, 'email' => $user->email],
             'success' => true,
             'totalSurveys' => $total,
-            'lastSurvey' => $lastSurvey ? new SurveyResource($lastSurvey) : null,
+            'lastSurvey' => $lastSurvey ? new SurveyResourceDashboard($lastSurvey) : null,
             'totalAnswers' => $totalAnswers,
             'latestFiveAnswers' => SurveyAnswerResource::collection($latestFiveAnswers),
         ]);

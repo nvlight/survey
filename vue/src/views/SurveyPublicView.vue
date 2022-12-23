@@ -1,6 +1,6 @@
 <template>
     <div class="py-5 px-8">
-        <div v-if="loading" class="flex justify-center">Загрузка...</div>
+        <div v-if="loading" class="flex justify-center">Loding...</div>
         <div v-else>
 <!--            <pre>{{survey}}</pre>-->
 

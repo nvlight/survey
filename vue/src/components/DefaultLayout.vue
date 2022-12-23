@@ -46,7 +46,11 @@
                                     <MenuButton
                                         class="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt=""/>
+<!--                                        <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt=""/>-->
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                             class="w-6 h-6 text-gray-400 hover:text-white">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
                                     </MenuButton>
                                 </div>
                                 <transition enter-active-class="transition ease-out duration-100"
@@ -101,11 +105,16 @@
                 <div class="border-t border-gray-700 pt-4 pb-3">
                     <div class="flex items-center px-5">
                         <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt=""/>
+<!--                            <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt=""/>-->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                 class="w-6 h-6 text-gray-400 hover:text-white">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+
                         </div>
                         <div class="ml-3">
-                            <div class="text-base font-medium leading-none text-white">{{ user.name }}</div>
-                            <div class="text-sm font-medium leading-none text-gray-400">{{ user.email }}</div>
+                            <div class="text-base font-medium leading-none text-white">{{ user?.name }}</div>
+                            <div class="text-sm font-medium leading-none text-gray-400">{{ user?.email }}</div>
                         </div>
                         <button type="button"
                                 class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -134,7 +143,7 @@ import {Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIte
 import {Bars3Icon, BellIcon, XMarkIcon} from '@heroicons/vue/24/outline'
 
 import {useStore} from "vuex";
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
 import {useRouter} from "vue-router";
 import Notification from "../components/Notification.vue"
 
@@ -149,7 +158,17 @@ const userNavigation = [
 
 const store = useStore();
 const router = useRouter();
-const user = computed( () => store.state.user.data );
+const user = computed( () => store.state.dashboard.data.user );
+
+function getUser(){
+    store.dispatch('getUserData')
+        .then( response => {
+            //console.log(response.data);
+        })
+        .catch(err =>{
+            //console.log(err.response.data)
+        })
+}
 
 function logout(ev){
     store.dispatch('logout')
@@ -162,5 +181,9 @@ function logout(ev){
             console.log(err.response.data)
         })
 }
+
+onMounted( () => {
+    getUser();
+})
 
 </script>

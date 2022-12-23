@@ -6,9 +6,7 @@
         </template>
 
 <!--        <div>dashboard.loading: {{dashboard.loading}}</div>-->
-        <div v-if="loading.loading" class="flex justify-center">
-            Загрузка...
-        </div>
+        <div v-if="loading" class="flex justify-center">Loading...</div>
         <div v-else>
 <!--            <pre>dashboard: {{data.lastSurvey}}</pre>-->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 text-gray-700">
@@ -29,26 +27,39 @@
                         {{ data.totalAnswers }}
                     </div>
                 </div>
-                <div class="animate-fade-in-down row-span-2 shadow-md p-4 bg-white order-3 lg:order-1"
+
+                <div v-if="data.lastSurvey" class="animate-fade-in-down row-span-2 shadow-md p-4 bg-white order-3 lg:order-1"
                     style=""
                 >
                     <h3 class="text-2xl font-semibold">Latest Survey</h3>
-                    <img :src="data.lastSurvey?.image_url"
+                    <img :src="data.lastSurvey.image_url"
                          class="w-[240px] mx-auto"
                          alt=""
                     />
-                    <h3 class="font-semibold text-xl mb-3">{{ data.lastSurvey?.title }}</h3>
-                    <div class="flex justify-between text-sm mb-1">
-                        <div>Upload Date:</div>
-                        <div>{{ data.lastSurvey?.updated_at.substring(0,10) }}</div>
+                    <h3 class="font-semibold text-xl mb-3">{{ data.lastSurvey.title }}</h3>
+                    <div class="flex justify-between text-sm ">
+                        <div>Created Date:</div>
+                        <div>{{ data.lastSurvey.updated_at }}</div>
+                    </div>
+                    <div class="flex justify-between text-sm ">
+                        <div>Status:</div>
+                        <div>{{ data.lastSurvey.status}}</div>
+                    </div>
+                    <div class="flex justify-between text-sm ">
+                        <div>Expire Date:</div>
+                        <div>{{ data.lastSurvey.expire_date }}</div>
+                    </div>
+                    <div class="flex justify-between text-sm ">
+                        <div>Questions: </div>
+                        <div>{{ data.lastSurvey.questions }}</div>
                     </div>
                     <div class="flex justify-between text-sm mb-3">
                         <div>Answers: </div>
-                        <div>{{ data.totalAnswers }}</div>
+                        <div>{{ data.lastSurvey.answers }}</div>
                     </div>
                     <div class="flex justify-between items-center">
                         <router-link
-                            :to="{name: 'SurveyView', params: { id: data.lastSurvey?.id ? data.lastSurvey.id : 0}}"
+                            :to="{name: 'SurveyView', params: { id: data.lastSurvey.id}}"
                             class="flex py-2 px-4 border border-transparent text-sm rounded-md text-indigo-500
                                 hover:bg-indigo-700 hover:text-white transition-colors focus:ring-2 focus:ring-offset-2
                                 focus:ring-indigo-500"
@@ -93,7 +104,7 @@
                         <div class="font-semibold">{{ answer.survey.title }}</div>
                         <small class="flex justify-between">
                             Answer Made at:
-                            <i class="font-semibold">{{answer.survey.updated_at.substring(0,10)}}</i>
+                            <i class="font-semibold">{{answer.survey.updated_at}}</i>
                         </small>
                     </a>
                 </div>
@@ -112,13 +123,13 @@ import {useStore} from "vuex";
 const route = useRoute();
 const store = useStore();
 
-let loading = true;
+const loading = computed( () => store.state.dashboard.loading );;
 const data = computed( () => store.state.dashboard.data );
 
 store.dispatch('getDashboardData')
     .then((res) => {
         if (res.data.success){
-            loading = false;
+            //loading = false;
         }
     })
 

@@ -10,12 +10,12 @@
                     @click="deleteSurvey"
                     class="py-2 px-3 text-white bg-red-500 rounded-md hover:bg-red-600 focus:bg-red-700"
                 >
-                    <div class="flex">
+                    <div class="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                             class="w-6 h-6 ">
+                             class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                         </svg>
-                        <span>Delete Survey</span>
+                        <span class="ml-1">Delete Survey</span>
                     </div>
                 </button>
             </div>
@@ -24,7 +24,7 @@
 <!--        <pre>{{ $store.getters.currentSurvey }}</pre>-->
 <!--        <pre>{{ model.img}}</pre>-->
 
-        <div v-if="surveyLoading" class="text-center">Загрузка...</div>
+        <div v-if="surveyLoading" class="text-center">Loading...</div>
         <form v-else @submit.prevent="saveSurvey" class="animate-fade-in-down">
             <div class="border shadow sm:rounded-md sm:overflow-hidden">
 
@@ -105,13 +105,14 @@
                     <!-- Expire Date -->
                     <div>
                         <label class="text-sm block font-medium text-gray-700">Expire Date
-                            <input type="date" name="expire_data"
-                                   v-model="model.expire_data"
+                            <input type="date" name="expire_date"
+                                   v-model="model.expire_date"
                                    autocomplete="survey_title"
                                    class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md
                                         focus:ring-indigo-500 focus:border-indigo-500"
                             />
                         </label>
+<!--                        <div>expire_date: {{model.expire_date}}</div>-->
                     </div>
                     <!--/ Expire Date -->
 
@@ -127,7 +128,7 @@
                             </div>
                             <span class="ml-2">Active</span>
                         </label>
-
+<!--                        <div>expire_date: {{model.status}}</div>-->
                     </div>
                     <!--/ Status -->
                 </div>
@@ -202,7 +203,7 @@ let model = ref({
     status: false,
     description: null,
     image: null,
-    expire_data: null,
+    expire_date: null,
     questions: [],
     img: null,
 });
@@ -215,6 +216,7 @@ watch(
         model.value = {
             ...JSON.parse(JSON.stringify(nv)),
             status: nv.status !== "draft",
+            expire_date: nv.expire_date?.substring(0,10),
         }
     }
 );
@@ -285,6 +287,13 @@ function saveSurvey(){
                 params: { id: data.data.id},
             });
         })
+        .catch((err) => {
+            //console.log(err);
+            store.commit('notify', {
+                message: err.response.data.message,
+                type: 'false',
+            })
+        });
 }
 
 function deleteSurvey() {

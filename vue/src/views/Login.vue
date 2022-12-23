@@ -33,21 +33,35 @@
             </div>
         </div>
 
-        <div v-if="errorMsg" class="flex items-center justify-between px-5 py-3 bg-red-600 rounded-md text-white"
-            >
-            {{errorMsg}}
-            <span @click="errorMsg=''"
-              class="flex items-center justify-center h-8 w-8 cursor-pointer rounded-full transition-colors hover:bg-[rgba(0,0,0,0.2)]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </span>
-        </div>
+        <Alert v-if="Object.keys(errors).length"  @closeAlert="errors = {}">
+            <div v-if="typeof errors == 'string'">{{errors}}</div>
+            <div v-else>
+                <div v-for="(error,index) in errors"
+                     :key="index"
+                >
+                    <div>
+                        <div v-if="typeof error == 'object'" >
+                            <div v-for="(er,index) in error">
+                                * {{er}}
+                            </div>
+                        </div>
+                        <div v-else>
+                            {{error}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Alert>
+
         <div>
             <button type="submit" class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <LockClosedIcon class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
             </span>
+            <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
                 Sign in
             </button>
         </div>
@@ -60,30 +74,32 @@ import store from "../store"
 import {useRouter} from "vue-router";
 const router = useRouter();
 import {ref} from "vue";
+import Alert from "../components/Alert.vue"
 
 const user = {
     email: '',
     password: '',
     remember: false,
 }
-let errorMsg = ref('');
+let errors = ref({});
+const loading = ref(false);
 
 function login(){
+    loading.value = true;
     store.dispatch('login', user)
         .then( () => {
+            loading.value = false;
             router.push({name: 'Dashboard'})
         })
         .catch(err =>{
-            const data = err.response.data;
-            if (data.hasOwnProperty('error')){
-                errorMsg.value = data.error;
-            }else if (data.hasOwnProperty('errors')){
-                const errKey = Object.keys(data.errors)[0];
-                const errVal = data.errors[errKey];
-                const capitalizeErrKey = errKey.charAt(0).toUpperCase()
-                    + errKey.slice(1)
+            loading.value = false;
 
-                errorMsg.value = capitalizeErrKey + ': ' + errVal;
+            if (err.response.status = 422){
+                if (err.response.data.error){
+                    errors.value = err.response.data.error;
+                }else{
+                    errors.value = err.response.data.errors;
+                }
             }
         })
 }

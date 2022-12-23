@@ -411,6 +411,16 @@ const store = createStore({
                 })
         },
 
+        getUserData({commit}){
+            return axiosClient.get('/user')
+                .then( ({data}) => {
+                    if (data.success){
+                        commit('setUserData', data.data);
+                    }
+                    return data;
+                })
+        },
+
         login({commit}, user){
             return axiosClient.post('/login', user)
                 .then( ({data}) => {
@@ -611,6 +621,9 @@ const store = createStore({
             // debugger;
             state.dashboard.data = dashboard;
         },
+        setUserData(state, data){
+            state.user.data = data;
+        }
     },
     modules: {},
 })
