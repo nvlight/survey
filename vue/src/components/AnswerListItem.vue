@@ -1,0 +1,77 @@
+<template>
+    <div class="flex flex-col
+        py-4 px-6 shadow-md bg-white hover:bg-gray-50 h-[470px] border"
+    >
+        <img :src="answer.image_url" class="w-full h-48 object-cover" alt="">
+        <h4 class="mt-4 text-lg font-bold">{{ answer.title }}</h4>
+<!--        <pre>{{answer}}</pre>-->
+        <div>
+            <div class="flex justify-between">
+                <span>Status:</span> <span>{{answer.status ? 'Active' : 'Draft'}}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Expire date:</span> <span>{{answer.expire_date}}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Start date:</span> <span>{{answer.start_date}}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>End date:</span> <span>{{answer.end_date}}</span>
+            </div>
+        </div>
+        <div class="overflow-hidden flex-1"></div>
+
+        <div class="flex justify-between items-center mt-3">
+            <router-link :to="{name: 'AnswerView', params: {id: answer.id}}"
+                         class="flex items-center py-2 px-4 border border-transparent text-sm rounded-md text-white
+                                bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-700
+                                focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+
+                <span class="ml-1">Show</span>
+            </router-link>
+            <div class="flex items-center">
+                <a
+                    :href="`/view/survey/${answer.slug}`"
+                    target="_blank"
+                    class="w-6 h-6 flex items-center justify-center rounded-full
+                            border border-transparent text-sm text-indigo-500
+                            focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    title="Take a survey"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                         class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+                <button v-if="answer.id" @click="emit('delete', answer)"
+                    class="h-8 w-8 flex items-center justify-center rounded-full
+                        text-red-500 focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+            </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+
+const {answer} = defineProps({
+    answer: {
+        type: Object,
+        required: true,
+    }
+})
+const emit = defineEmits(['delete',])
+
+</script>
+
+<style scoped>
+
+</style>

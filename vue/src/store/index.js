@@ -1,5 +1,6 @@
 import {createStore} from "vuex";
 import axiosClient from "../axios.js";
+import {answersModule} from "../router/answersModule.js";
 
 const tmpSurveys = [
     {
@@ -625,7 +626,9 @@ const store = createStore({
             state.user.data = data;
         }
     },
-    modules: {},
+    modules: {
+        answers: answersModule
+    },
 })
 
 export default store;

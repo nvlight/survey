@@ -150,6 +150,7 @@ import Notification from "../components/Notification.vue"
 const navigation = [
     {name: 'Dashboard', to: {name: 'Dashboard'} },
     {name: 'Surveys', to: {name: 'Surveys'} },
+    {name: 'Answers', to: {name: 'Answers'} },
 ]
 const userNavigation = [
     {name: 'Your Profile', href: '#'},

@@ -99,13 +99,17 @@
                     <a href="#"
                        v-for="answer of data.latestFiveAnswers"
                        :key="answer.id"
-                       class="block p-2 hover:bg-gray-100/90"
                     >
-                        <div class="font-semibold">{{ answer.survey.title }}</div>
-                        <small class="flex justify-between">
-                            Answer Made at:
-                            <i class="font-semibold">{{answer.survey.updated_at}}</i>
-                        </small>
+                        <router-link :to="{name: 'AnswerView', params: {id: answer.id}}"
+                            class="block p-2 hover:bg-gray-100/90"
+                            >
+                            <div class="font-semibold">{{ answer.survey.title }}</div>
+                            <small class="flex justify-between">
+                                Answer Made at:
+                                <i class="font-semibold">{{answer.survey.updated_at}}</i>
+                            </small>
+                            <small><div>id: {{answer.id}}</div></small>
+                        </router-link>
                     </a>
                 </div>
             </div>
