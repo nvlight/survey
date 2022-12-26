@@ -5,16 +5,16 @@
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900">Answers</h1>
 
                 <div class="flex items-center ">
-                    <div class="font-semibold text-xl">survey slug filter </div>
                     <select v-model="survey_slug_filter"
                         class="rounded-md border-gray-300 ml-2"
                         >
-                        <option value="">Choose Survey slug</option>
+                        <option value="">Survey slug filter</option>
                         <option v-for="(ss, index) in survey_slugs"
                             :key="index" :value="ss"
                             >{{ ss }}
                         </option>
                     </select>
+                    <div class="ml-2 font-semibold cursor-pointer" @click="resetSurveySlugFilter">Reset filter</div>
                 </div>
             </div>
         </template>
@@ -87,9 +87,13 @@ const survey_slugs = [
 ];
 const survey_slug_filter = ref('');
 
-store.dispatch('answers/getAnswers')
-    .then((res) => {
+getAnswers();
+
+function getAnswers(){
+    store.dispatch('answers/getAnswers')
+        .then((res) => {
     })
+}
 
 function deleteAnswer(answer_id){
     if (!confirm('Are you sure to delete answer? This action can\'t be cancelled!!')){
@@ -103,14 +107,16 @@ function deleteAnswer(answer_id){
         })
 }
 
+function resetSurveySlugFilter(){
+    survey_slug_filter.value = '';
+}
+
 watch(
     () => survey_slug_filter.value,
     (nv, ov) => {
-        if (survey_slug_filter.value){
-            store.dispatch('answers/getAnswers', {'survey_filter': survey_slug_filter.value })
-                .then((res) => {
-                })
-        }
+        store.dispatch('answers/getAnswers', {'survey_filter': survey_slug_filter.value })
+            .then((res) => {
+            })
     }
 );
 
