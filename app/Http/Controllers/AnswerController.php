@@ -20,15 +20,21 @@ class AnswerController extends Controller
     {
         $user = $request->user();
 
-        return AnswerResource::collection(
-            Survey::where('user_id', $user->id)
+        $survey_filter = $request->survey_filter;
+
+        $queryPart = Survey::where('user_id', $user->id)
             ->join('survey_answers', 'survey_answers.survey_id', '=', 'surveys.id')
             ->select('surveys.title', 'surveys.slug','surveys.image', 'surveys.status','surveys.expire_date' ,
                 'survey_answers.start_date','survey_answers.end_date','survey_answers.id'
-                )
-            //->toSql()
-            ->paginate(5)
-        );
+            );
+
+        $queryPart = $survey_filter
+                ? $queryPart->where('surveys.slug', '=', $survey_filter )
+                : $queryPart;
+
+        $query = $queryPart->paginate(5);
+
+        return AnswerResource::collection($query);
     }
 
     /**

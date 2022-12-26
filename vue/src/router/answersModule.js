@@ -31,11 +31,10 @@ export const answersModule = {
         // }
     },
     actions: {
-        getAnswers({commit}, {url = null} = {}){
-            url = url || '/answer'
+        getAnswers({commit}, payload){
             commit('setAnswersLoading', true);
             return axiosClient
-                .get(`${url}`)
+                .get('/answer', { params : payload })
                 .then( ( res ) => {
                     commit('setAnswers', res.data);
                     commit('setAnswersLoading', false);

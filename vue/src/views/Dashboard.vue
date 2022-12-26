@@ -90,11 +90,10 @@
                 >
                     <div class="flex justify-between items-center mb-3 px-2">
                         <h3 class="text-2xl font-semibold">Latest Answers</h3>
-                        <a href="javascript:void(0)"
-                           class="text-sm text-blue-500 hover:decoration-blue-500"
-                        >
+                        <router-link :to="{name: 'Answers'}" class="text-sm text-blue-500
+                            hover:decoration-blue-500 hover:underline">
                             View all
-                        </a>
+                        </router-link>
                     </div>
                     <a href="#"
                        v-for="answer of data.latestFiveAnswers"
@@ -108,7 +107,7 @@
                                 Answer Made at:
                                 <i class="font-semibold">{{answer.survey.updated_at}}</i>
                             </small>
-                            <small><div>id: {{answer.id}}</div></small>
+<!--                            <small><div>id: {{answer.id}}</div></small>-->
                         </router-link>
                     </a>
                 </div>

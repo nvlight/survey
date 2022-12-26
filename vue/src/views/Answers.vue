@@ -3,6 +3,19 @@
         <template v-slot:header>
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900">Answers</h1>
+
+                <div class="flex items-center ">
+                    <div class="font-semibold text-xl">survey slug filter </div>
+                    <select v-model="survey_slug_filter"
+                        class="rounded-md border-gray-300 ml-2"
+                        >
+                        <option value="">Choose Survey slug</option>
+                        <option v-for="(ss, index) in survey_slugs"
+                            :key="index" :value="ss"
+                            >{{ ss }}
+                        </option>
+                    </select>
+                </div>
             </div>
         </template>
 
@@ -58,10 +71,21 @@
 <script setup>
 import PageComponent from "../components/PageComponent.vue";
 import store from "../store/index.js";
-import {computed} from "vue";
+import {computed, ref, watch} from "vue";
 import AnswerListItem from "../components/AnswerListItem.vue";
 
 const answers = computed( () => store.getters["answers/answers"] );
+const survey_slugs = [
+    'php8-updated',
+    'vuejs',
+    'laravel-eloquent',
+    'laravel',
+    'javascript',
+    'vuex',
+    'vue-router',
+    'mysql-8',
+];
+const survey_slug_filter = ref('');
 
 store.dispatch('answers/getAnswers')
     .then((res) => {
@@ -78,6 +102,18 @@ function deleteAnswer(answer_id){
             //store.dispatch('getSurveys');
         })
 }
+
+watch(
+    () => survey_slug_filter.value,
+    (nv, ov) => {
+        if (survey_slug_filter.value){
+            store.dispatch('answers/getAnswers', {'survey_filter': survey_slug_filter.value })
+                .then((res) => {
+                })
+        }
+    }
+);
+
 </script>
 
 <style></style>
